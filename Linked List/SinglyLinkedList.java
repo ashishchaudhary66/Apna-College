@@ -92,7 +92,19 @@ public class SinglyLinkedList {
         }
     }
 
-
+    public void reverse(){
+        Node cur=first;
+        Node prev=null;
+        Node next;
+        while(cur!=null){
+            next=cur.link;
+            cur.link=prev;
+            prev=cur;
+            cur=next;
+        }
+        first=prev;
+    }
+    
     public static void main(String args[]){
         SinglyLinkedList ll=new SinglyLinkedList();
         ll.addFirst(20);
@@ -103,6 +115,9 @@ public class SinglyLinkedList {
         ll.insert(40,2);
         ll.display();
         System.out.println("\nSize : "+ll.getSize());
+        
+        ll.reverse();
+        ll.display();
     }
 
 }
