@@ -1,6 +1,5 @@
 
-import java.util.Random;
-import java.util.Arrays;
+import java.util.*;
 
 class Main {
 
@@ -12,8 +11,108 @@ class Main {
         int[][] sudoku = generator.generateSudoku(40);
 
         generator.printBoard(sudoku);
+
+        SudokuSolver solver = new SudokuSolver();
+
+        boolean isSolved = solver.Sudoku(sudoku, 0, 0);
+
+        if(isSolved){
+            System.out.println();
+            System.out.println("------- Soved -------");
+            System.out.println();
+            generator.printBoard(sudoku);
+        }
+        else{
+            System.out.println("------- Not Soved --------");
+        }
     }
 
+    static class SudokuSolver{
+
+        // Sudoku Solve
+       public static boolean Sudoku(int[][] grid, int row, int col) {
+
+            int n = grid.length;
+    
+            // All rows completed
+            if (row == n) {
+                return true;
+            }
+    
+            // Calculate next cell
+            int nextRow = row;
+            int nextCol = col + 1;
+    
+            if (nextCol == n) {
+                nextRow++;
+                nextCol = 0;
+            }
+    
+            // Skip already filled cells
+            if (grid[row][col] != 0) {
+                return Sudoku(grid, nextRow, nextCol);
+            }
+    
+            // Try numbers from 1 to 9
+            for (int num = 1; num <= n; num++) {
+    
+                if (isSafe(grid, row, col, num)) {
+    
+                    grid[row][col] = num;
+    
+                    if (Sudoku(grid, nextRow, nextCol)) {
+                        return true;
+                    }
+    
+                    // Backtracking
+                    grid[row][col] = 0;
+                }
+            }
+    
+            return false;
+        }
+
+        
+        // Helper method
+        private static boolean isSafe(int[][] grid, int i, int j, int num){
+            // Horizontal
+            for(int col = 0; col<grid.length; col++){
+                if(grid[i][col] == num){
+                    return false;
+                }
+            }
+            
+            // Vertical
+            for(int row = 0; row<grid.length; row++){
+                if(grid[row][j] == num){
+                    return false;
+                }
+            }
+            
+            // partial grid
+            int[] initialIndex = getPartialGridIndex(i, j);
+            int row = initialIndex[0];
+            int col = initialIndex[1];
+            for(int ii = 0; ii < 3; ii++){
+                for(int jj = 0; jj < 3; jj++){
+                    if(grid[row+ii][col+jj] == num){
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        // for 9 * 9
+        private static int[] getPartialGridIndex(int i, int j){
+            int row = i - (i%3);
+            int col = j - (j%3);
+
+            return new int[]{row, col};
+        }
+    }
+    
     // Sudoku Generator
     static class SudokuGenerator {
 
